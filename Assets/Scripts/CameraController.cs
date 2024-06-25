@@ -8,12 +8,6 @@ public class CameraController : MonoBehaviour
     public Vector3 min = new Vector3(-16f, 6f, -20f);
     public Vector3 max = new Vector3(16f, 30f, 6f);
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     // Update is called once per frame
     void Update()
     {

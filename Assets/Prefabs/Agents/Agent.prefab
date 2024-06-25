@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4553226685197452}
   - component: {fileID: 3868608020608213468}
+  - component: {fileID: -4124573136197863517}
   m_Layer: 0
   m_Name: Agent
   m_TagString: Untagged
@@ -55,6 +56,18 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-4124573136197863517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236025834115242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 821799475c4c0be48babed7bf61fc0a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2362029430567486054
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +258,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0dfd4601d10ac1b42b2e4c3a20f88d64, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
