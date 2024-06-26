@@ -1387,6 +1387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f24886cd21093e4383765b53a547693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  randomSeed: 0
 --- !u!1 &350853931
 GameObject:
   m_ObjectHideFlags: 0
@@ -3543,7 +3544,7 @@ MonoBehaviour:
   - name: Black
     color: {r: 0, g: 0, b: 0, a: 1}
   agentToSpawn: {fileID: 1236025834115242, guid: 2b886293e281d774c8cdbf0ed31d21c7, type: 3}
-  agentsNumber: 8
+  agentsNumber: 5
 --- !u!4 &1026166121
 Transform:
   m_ObjectHideFlags: 0
