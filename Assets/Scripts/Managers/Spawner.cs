@@ -9,25 +9,29 @@ public class Spawner : MonoBehaviour
                                             };
 
     public GameObject agentToSpawn = null;
+    public GameObject killerToSpawn = null;
     [Range(4, 8)] public int agentsNumber = 5;
 
     private Transform spawns = null;
-    private Transform agentsParent = null;
+    public Transform agentsParent = null;
 
     // Start is called before the first frame update
     void Start()
     {
         spawns = GameObject.FindWithTag("Respawn").transform;
-        agentsParent = GameObject.Find("Agents").transform;
 
         Spawn();
     }
 
     private void Spawn()
     {
-        for (int i = 0; i < agentsNumber && i < spawns.childCount && i < agentColors.Length; i++) {
+        int n = Mathf.Min(agentsNumber, spawns.childCount, agentColors.Length);
+        int killerIndex = Random.Range(0, n);
+        for (int i = 0; i < n; i++) {
+            GameObject gameObjectToSpawn = (i == killerIndex) ? killerToSpawn : agentToSpawn;
             Transform spawnTransform = spawns.GetChild(i);
-            GameObject agentGameObject = Instantiate(agentToSpawn, spawnTransform.position, spawnTransform.rotation, agentsParent);
+            
+            GameObject agentGameObject = Instantiate(gameObjectToSpawn, spawnTransform.position, spawnTransform.rotation, agentsParent);
 
             Agent agent = agentGameObject.GetComponent<Agent>();
             agent.Init(agentColors[i]);

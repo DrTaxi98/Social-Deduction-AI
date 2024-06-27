@@ -15,23 +15,27 @@ public class GameManager : MonoBehaviour
         else
         {
             Instance = this;
+            Init();
         }
     }
     #endregion singleton
 
-    public int randomSeed = 0;
+    public int RandomSeed { get; private set; } = 0;
 
     private List<Agent> agents = new List<Agent>();
-    private POI[] pois = null;
+    private PointOfInterest[] pois = null;
+
+    private void Init()
+    {
+        if (RandomSeed == 0)
+            RandomSeed = (int)System.DateTime.Now.Ticks;
+        Random.InitState(RandomSeed);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        if (randomSeed == 0)
-            randomSeed = (int)System.DateTime.Now.Ticks;
-        Random.InitState(randomSeed);
-
-        pois = FindObjectsByType<POI>(FindObjectsSortMode.InstanceID);
+        pois = FindObjectsByType<PointOfInterest>(FindObjectsSortMode.InstanceID);
     }
 
     public void AddAgent(Agent agent)
@@ -39,24 +43,42 @@ public class GameManager : MonoBehaviour
         agents.Add(agent);
     }
 
-    private POI RandomPOI()
+    private PointOfInterest RandomPOI()
     {
         int randomIndex = Random.Range(0, pois.Length);
         return pois[randomIndex];
     }
 
-    public HashSet<POI> RandomPOIs(int n)
+    public HashSet<PointOfInterest> RandomPOIs(int n)
     {
         n = Mathf.Min(n, pois.Length);
-        HashSet<POI> randomPOIs = new HashSet<POI>();
+        HashSet<PointOfInterest> randomPOIs = new HashSet<PointOfInterest>();
         for (int i = 0; i < n; i++)
         {
-            POI randomPOI;
+            PointOfInterest randomPOI;
             do
             {
                 randomPOI = RandomPOI();
             } while (!randomPOIs.Add(randomPOI));
         }
         return randomPOIs;
+    }
+
+    private void StopAgents()
+    {
+        foreach (Agent agent in agents)
+        {
+            if (!agent.IsDead)
+            {
+                agent.Stop();
+                agent.SetAgentLocation();
+            }
+        }
+    }
+
+    public void StartMeeting()
+    {
+        StopAgents();
+        // RBS.Start();
     }
 }
