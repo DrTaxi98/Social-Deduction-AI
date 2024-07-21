@@ -331,8 +331,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2400cb167bb931409ec70d8cf55a125, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3
-  angle: 90
+  radius: 5
+  angle: 120
   resampleTime: 0.2
   agentMask:
     serializedVersion: 2

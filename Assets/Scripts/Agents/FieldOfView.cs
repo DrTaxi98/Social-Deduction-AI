@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class FieldOfView : MonoBehaviour
 {
-    [Range(1f, 10f)] public float radius = 3f;
-    [Range(0f, 360f)] public float angle = 90f;
+    [Range(1f, 10f)] public float radius = 5f;
+    [Range(0f, 360f)] public float angle = 120f;
 
     [Range(0.02f, 1f)] public float resampleTime = 0.2f;
 
@@ -15,12 +15,17 @@ public class FieldOfView : MonoBehaviour
 
     private Agent agent;
 
+    private Color fovColor;
+    private Color losColor;
     private List<Transform> agentsSeen = new List<Transform>();
 
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponentInParent<Agent>();
+        losColor = agent.Color;
+        fovColor = losColor - Utils.opaque;
+
         StartCoroutine(See());
     }
 
@@ -30,12 +35,12 @@ public class FieldOfView : MonoBehaviour
         {
             SeeAgents();
             yield return new WaitForSeconds(resampleTime);
+            agentsSeen.Clear();
         }
     }
 
     private void SeeAgents()
     {
-        agentsSeen.Clear();
         Collider[] otherColliders = Physics.OverlapSphere(transform.position, radius, agentMask);
         foreach (Collider otherCollider in otherColliders)
         {
@@ -74,16 +79,12 @@ public class FieldOfView : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 angleDirA = AngleDir(-angle / 2);
-        Vector3 angleDirB = AngleDir(angle / 2);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(transform.position, transform.position + angleDirA * radius);
-        Gizmos.DrawLine(transform.position, transform.position + angleDirB * radius);
+        Vector3 angleDir = AngleDir(-angle / 2);
 
-        Handles.color = Color.yellow;
-        Handles.DrawWireArc(transform.position, transform.up, angleDirA, angle, radius);
+        Handles.color = fovColor;
+        Handles.DrawSolidArc(transform.position, transform.up, angleDir, angle, radius);
 
-        Gizmos.color = Color.red;
+        Gizmos.color = losColor;
         foreach (Transform agentSeen in agentsSeen)
         {
             Vector3 verticalAdj = VerticalAdj(agentSeen.position);

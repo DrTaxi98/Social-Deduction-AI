@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,7 +12,7 @@ public class Agent : MonoBehaviour
     private GameObject aliveBody;
     private GameObject deadBody;
 
-    private Color color;
+    public Color Color { get; private set; }
 
     [Range(1, 10)] public int maxTasks = 5;
     private HashSet<PointOfInterest> tasks = new HashSet<PointOfInterest>();
@@ -23,10 +24,13 @@ public class Agent : MonoBehaviour
 
     private AgentInfo agentInfo = new AgentInfo();
 
+    private GUIStyle style = new GUIStyle();
+    public Color nameColor = Color.white;
+
     public void Init(Utils.AgentColor agentColor)
     {
         name = agentColor.name;
-        color = agentColor.color;
+        Color = agentColor.color;
     }
 
     // Start is called before the first frame update
@@ -37,8 +41,10 @@ public class Agent : MonoBehaviour
         aliveBody = transform.GetChild(0).gameObject;
         deadBody = transform.GetChild(1).gameObject;
 
-        aliveBody.GetComponent<Renderer>().material.color = color;
-        deadBody.GetComponent<Renderer>().material.color = color;
+        aliveBody.GetComponent<Renderer>().material.color = Color;
+        deadBody.GetComponent<Renderer>().material.color = Color;
+
+        style.normal.textColor = nameColor;
 
         NextTask();
     }
@@ -104,7 +110,7 @@ public class Agent : MonoBehaviour
     {
         agentInfo.AddAgentSeen(agent, location);
         if (name == "Red")
-        Debug.Log(name + " saw " + agent.name + " in " + location.name);
+            Debug.Log(name + " saw " + agent.name + " in " + location.name);
     }
 
     public void ReportDead(Agent dead)
@@ -132,5 +138,10 @@ public class Agent : MonoBehaviour
     public void SetAgentLocation()
     {
         agentInfo.AddAgentLocation(this, CurrentLocation);
+    }
+
+    protected virtual void OnDrawGizmos()
+    {
+        Handles.Label(transform.position + new Vector3(-1f, 2f, 1.5f), name, style);
     }
 }
