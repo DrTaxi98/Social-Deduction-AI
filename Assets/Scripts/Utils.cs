@@ -1,9 +1,9 @@
+using System;
 using UnityEngine;
 
 public static class Utils
 {
     public static Color orange = Color.red + Color.green / 2;
-    public static Color opaque = new Color(0, 0, 0, 0.8f);
 
     [System.Serializable]
     public struct AgentColor
@@ -16,5 +16,12 @@ public static class Utils
             this.name = name;
             this.color = color;
         }
+    }
+
+    private static double timestampThreshold = 5d;
+
+    public static bool TimestampClose(double t1, double t2)
+    {
+        return Math.Abs(t2 - t1) < timestampThreshold;
     }
 }

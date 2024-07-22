@@ -120,6 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxTasks: 5
+  nameColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &634911030517180175
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,6 +338,7 @@ MonoBehaviour:
   agentMask:
     serializedVersion: 2
     m_Bits: 8
-  raycastMask:
+  obstacleMask:
     serializedVersion: 2
-    m_Bits: 63
+    m_Bits: 72
+  transparency: 0.15

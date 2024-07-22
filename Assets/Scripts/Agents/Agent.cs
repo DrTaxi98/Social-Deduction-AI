@@ -25,7 +25,7 @@ public class Agent : MonoBehaviour
     private AgentInfo agentInfo = new AgentInfo();
 
     private GUIStyle style = new GUIStyle();
-    public Color nameColor = Color.white;
+    public Color nameColor = Color.black;
 
     public void Init(Utils.AgentColor agentColor)
     {
@@ -109,7 +109,7 @@ public class Agent : MonoBehaviour
     public void AddAgentSeen(Agent agent, Location location)
     {
         agentInfo.AddAgentSeen(agent, location);
-        if (name == "Red")
+        if (name.CompareTo("Red") == 0)
             Debug.Log(name + " saw " + agent.name + " in " + location.name);
     }
 

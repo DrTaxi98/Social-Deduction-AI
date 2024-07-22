@@ -11,20 +11,23 @@ public class FieldOfView : MonoBehaviour
     [Range(0.02f, 1f)] public float resampleTime = 0.2f;
 
     public LayerMask agentMask;
-    public LayerMask raycastMask;
+    public LayerMask obstacleMask;
 
     private Agent agent;
 
-    private Color fovColor;
     private Color losColor;
+    private Color fovColor;
+    public float transparency = 0.15f;
     private List<Transform> agentsSeen = new List<Transform>();
 
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponentInParent<Agent>();
+
         losColor = agent.Color;
-        fovColor = losColor - Utils.opaque;
+        fovColor = losColor;
+        fovColor.a = transparency;
 
         StartCoroutine(See());
     }
@@ -44,23 +47,26 @@ public class FieldOfView : MonoBehaviour
         Collider[] otherColliders = Physics.OverlapSphere(transform.position, radius, agentMask);
         foreach (Collider otherCollider in otherColliders)
         {
-            Transform otherTransform = otherCollider.transform;
-            Vector3 verticalAdj = VerticalAdj(otherTransform.position);
-            Vector3 direction = (verticalAdj - transform.position);
-            if (Vector3.Angle(transform.forward, direction) < angle / 2)
+            if (otherCollider.transform != agent.transform)
             {
-                float distance = direction.magnitude;
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, direction, out hit, distance, raycastMask) &&
-                    hit.transform == otherTransform)
+                Transform otherTransform = otherCollider.transform;
+                Vector3 verticalAdj = VerticalAdj(otherTransform.position);
+                Vector3 direction = (verticalAdj - transform.position);
+                if (Vector3.Angle(transform.forward, direction) < angle / 2)
                 {
-                    agentsSeen.Add(otherTransform);
+                    float distance = direction.magnitude;
+                    RaycastHit hit;
+                    if (Physics.Raycast(transform.position, direction, out hit, distance, obstacleMask) &&
+                        hit.transform == otherTransform)
+                    {
+                        agentsSeen.Add(otherTransform);
 
-                    Agent otherAgent = otherTransform.GetComponent<Agent>();
-                    if (otherAgent.IsDead)
-                        agent.ReportDead(otherAgent);
-                    else
-                        agent.AddAgentSeen(otherAgent, otherAgent.CurrentLocation);
+                        Agent otherAgent = otherTransform.GetComponent<Agent>();
+                        if (otherAgent.IsDead)
+                            agent.ReportDead(otherAgent);
+                        else
+                            agent.AddAgentSeen(otherAgent, otherAgent.CurrentLocation);
+                    }
                 }
             }
         }
