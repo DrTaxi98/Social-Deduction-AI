@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +24,7 @@ public class AgentInfo
 
     private List<AgentLocation> agentsLocations = new List<AgentLocation>();
     private List<AgentLocation> agentsSeen = new List<AgentLocation>();
-    private AgentLocation dead;
+    private AgentLocation deadBodyLocation;
 
     public void AddAgentLocation(Agent agent, Location location)
     {
@@ -39,8 +38,8 @@ public class AgentInfo
         agentsSeen.Add(agentSeen);
     }
 
-    public void SetDead(Agent agent, Location location)
+    public void SetDeadBodyLocation(Agent deadBody, Location location)
     {
-        dead = new AgentLocation(agent, location, Time.timeAsDouble);
+        deadBodyLocation = new AgentLocation(deadBody, location, Time.timeAsDouble);
     }
 }

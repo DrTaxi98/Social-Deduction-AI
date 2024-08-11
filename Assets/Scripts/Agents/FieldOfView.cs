@@ -13,11 +13,12 @@ public class FieldOfView : MonoBehaviour
     public LayerMask agentMask;
     public LayerMask obstacleMask;
 
+    public float transparency = 0.15f;
+
     private Agent agent;
 
     private Color losColor;
     private Color fovColor;
-    public float transparency = 0.15f;
     private List<Transform> agentsSeen = new List<Transform>();
 
     // Start is called before the first frame update
@@ -63,7 +64,7 @@ public class FieldOfView : MonoBehaviour
 
                         Agent otherAgent = otherTransform.GetComponent<Agent>();
                         if (otherAgent.IsDead)
-                            agent.ReportDead(otherAgent);
+                            agent.ReportDeadBody(otherAgent);
                         else
                             agent.AddAgentSeen(otherAgent, otherAgent.CurrentLocation);
                     }
@@ -83,6 +84,7 @@ public class FieldOfView : MonoBehaviour
         return new Vector3(Mathf.Sin(angleDeg * Mathf.Deg2Rad), 0, Mathf.Cos(angleDeg * Mathf.Deg2Rad));
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Vector3 angleDir = AngleDir(-angle / 2);
@@ -97,4 +99,5 @@ public class FieldOfView : MonoBehaviour
             Gizmos.DrawLine(transform.position, verticalAdj);
         }
     }
+#endif
 }

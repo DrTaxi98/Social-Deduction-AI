@@ -31,7 +31,7 @@ public class CameraController : MonoBehaviour
     private Vector3 Zoom()
     {
         float zoomInput = Input.GetAxisRaw("Mouse ScrollWheel");
-        Vector3 zoom = -transform.up * zoomInput * zoomSpeed * 1000f;
+        Vector3 zoom = 1000f * zoomInput * zoomSpeed * -transform.up;
         return zoom;
     }
 

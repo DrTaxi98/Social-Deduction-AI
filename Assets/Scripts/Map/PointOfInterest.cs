@@ -1,10 +1,12 @@
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class PointOfInterest : MonoBehaviour
 {
-    private string poiNumber;
     [Range(1f, 10f)] public float taskTime = 5f;
+
+    private string poiNumber;
 
     // Start is called before the first frame update
     void Start()
@@ -16,7 +18,7 @@ public class PointOfInterest : MonoBehaviour
     {
         if (other.TryGetComponent(out Agent agent) && agent.CurrentTask == this)
         {
-            agent.AccomplishTask();
+            agent.StartTask();
         }
     }
 }

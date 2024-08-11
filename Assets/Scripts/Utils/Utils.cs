@@ -3,25 +3,25 @@ using UnityEngine;
 
 public static class Utils
 {
-    public static Color orange = Color.red + Color.green / 2;
+    private const double TIMESTAMPS_CLOSE_THRESHOLD = 5d;
 
-    [System.Serializable]
-    public struct AgentColor
+    public static Color Orange { get; } = Color.red + Color.green / 2;
+
+    [Serializable]
+    public struct NameColor
     {
         public string name;
         public Color color;
 
-        public AgentColor(string name, Color color)
+        public NameColor(string name, Color color)
         {
             this.name = name;
             this.color = color;
         }
     }
 
-    private static double timestampThreshold = 5d;
-
-    public static bool TimestampClose(double t1, double t2)
+    public static bool AreTimestampsClose(double t1, double t2)
     {
-        return Math.Abs(t2 - t1) < timestampThreshold;
+        return Math.Abs(t2 - t1) < TIMESTAMPS_CLOSE_THRESHOLD;
     }
 }

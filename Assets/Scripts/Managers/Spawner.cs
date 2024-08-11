@@ -2,39 +2,39 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    public Utils.AgentColor[] agentColors = { new Utils.AgentColor("Red", Color.red), new Utils.AgentColor("Green", Color.green),
-                                              new Utils.AgentColor("Blue", Color.blue), new Utils.AgentColor("Yellow", Color.yellow),
-                                              new Utils.AgentColor("Magenta", Color.magenta), new Utils.AgentColor("Cyan", Color.cyan),
-                                              new Utils.AgentColor("Orange", Utils.orange), new Utils.AgentColor("Black", Color.black)
+    public Utils.NameColor[] agentsNamesColors = { new Utils.NameColor("Red", Color.red), new Utils.NameColor("Green", Color.green),
+                                              new Utils.NameColor("Blue", Color.blue), new Utils.NameColor("Yellow", Color.yellow),
+                                              new Utils.NameColor("Magenta", Color.magenta), new Utils.NameColor("Cyan", Color.cyan),
+                                              new Utils.NameColor("Orange", Utils.Orange), new Utils.NameColor("Black", Color.black)
                                             };
 
+    [Range(4, 8)] public int agentsNumber = 5;
     public GameObject agentToSpawn = null;
     public GameObject killerToSpawn = null;
-    [Range(4, 8)] public int agentsNumber = 5;
-
-    private Transform spawns = null;
     public Transform agentsParent = null;
+
+    private Transform spawnsParent = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        spawns = GameObject.FindWithTag("Respawn").transform;
+        spawnsParent = GameObject.FindWithTag("Respawn").transform;
 
         Spawn();
     }
 
     private void Spawn()
     {
-        int n = Mathf.Min(agentsNumber, spawns.childCount, agentColors.Length);
+        int n = Mathf.Min(agentsNumber, spawnsParent.childCount, agentsNamesColors.Length);
         int killerIndex = Random.Range(0, n);
         for (int i = 0; i < n; i++) {
             GameObject gameObjectToSpawn = (i == killerIndex) ? killerToSpawn : agentToSpawn;
-            Transform spawnTransform = spawns.GetChild(i);
+            Transform spawnTransform = spawnsParent.GetChild(i);
             
             GameObject agentGameObject = Instantiate(gameObjectToSpawn, spawnTransform.position, spawnTransform.rotation, agentsParent);
 
             Agent agent = agentGameObject.GetComponent<Agent>();
-            agent.Init(agentColors[i]);
+            agent.Init(agentsNamesColors[i]);
 
             GameManager.Instance.AddAgent(agent);
         }

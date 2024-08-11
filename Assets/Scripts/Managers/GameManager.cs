@@ -18,12 +18,12 @@ public class GameManager : MonoBehaviour
             Init();
         }
     }
-    #endregion singleton
-
-    public int RandomSeed { get; private set; } = 0;
+    #endregion
 
     private List<Agent> agents = new List<Agent>();
     private PointOfInterest[] pois = null;
+
+    public int RandomSeed { get; private set; } = 0;
 
     private void Init()
     {
@@ -43,12 +43,6 @@ public class GameManager : MonoBehaviour
         agents.Add(agent);
     }
 
-    private PointOfInterest RandomPOI()
-    {
-        int randomIndex = Random.Range(0, pois.Length);
-        return pois[randomIndex];
-    }
-
     public HashSet<PointOfInterest> RandomPOIs(int n)
     {
         n = Mathf.Min(n, pois.Length);
@@ -64,6 +58,18 @@ public class GameManager : MonoBehaviour
         return randomPOIs;
     }
 
+    public void StartMeeting()
+    {
+        StopAgents();
+        // RBS.Start();
+    }
+
+    private PointOfInterest RandomPOI()
+    {
+        int randomIndex = Random.Range(0, pois.Length);
+        return pois[randomIndex];
+    }
+
     private void StopAgents()
     {
         foreach (Agent agent in agents)
@@ -74,11 +80,5 @@ public class GameManager : MonoBehaviour
                 agent.SetAgentLocation();
             }
         }
-    }
-
-    public void StartMeeting()
-    {
-        StopAgents();
-        // RBS.Start();
     }
 }

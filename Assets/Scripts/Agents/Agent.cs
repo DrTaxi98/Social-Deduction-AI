@@ -7,27 +7,26 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Agent : MonoBehaviour
 {
+    [Range(1, 10)] public int maxTasks = 5;
+
+    public Color nameTextColor = Color.white;
+
     private NavMeshAgent agent;
 
     private GameObject aliveBody;
     private GameObject deadBody;
 
-    public Color Color { get; private set; }
-
-    [Range(1, 10)] public int maxTasks = 5;
     private HashSet<PointOfInterest> tasks = new HashSet<PointOfInterest>();
-
-    public PointOfInterest CurrentTask { get; private set; } = null;
-    public Location CurrentLocation { get; set; } = null;
-
-    public bool IsDead { get; private set; } = false;
-
     private AgentInfo agentInfo = new AgentInfo();
 
     private GUIStyle style = new GUIStyle();
-    public Color nameColor = Color.black;
 
-    public void Init(Utils.AgentColor agentColor)
+    public Color Color { get; private set; }
+    public PointOfInterest CurrentTask { get; private set; } = null;
+    public Location CurrentLocation { get; set; } = null;
+    public bool IsDead { get; private set; } = false;
+
+    public void Init(Utils.NameColor agentColor)
     {
         name = agentColor.name;
         Color = agentColor.color;
@@ -44,9 +43,57 @@ public class Agent : MonoBehaviour
         aliveBody.GetComponent<Renderer>().material.color = Color;
         deadBody.GetComponent<Renderer>().material.color = Color;
 
-        style.normal.textColor = nameColor;
+        style.normal.textColor = nameTextColor;
 
         NextTask();
+    }
+
+    public void SetAgentLocation()
+    {
+        agentInfo.AddAgentLocation(this, CurrentLocation);
+    }
+
+    public void AddAgentSeen(Agent agent, Location location)
+    {
+        agentInfo.AddAgentSeen(agent, location);
+        if (name.CompareTo("Red") == 0)
+            Debug.Log(name + " saw " + agent.name + " in " + location.name);
+    }
+
+    public void SetDeadBodyLocation(Agent deadBody, Location location)
+    {
+        agentInfo.SetDeadBodyLocation(deadBody, location);
+    }
+
+    public void StartTask()
+    {
+        StartCoroutine(AccomplishTask());
+    }
+
+    public void ReportDeadBody(Agent deadBody)
+    {
+        SetDeadBodyLocation(deadBody, deadBody.CurrentLocation);
+        GameManager.Instance.StartMeeting();
+    }
+
+    public void Stop()
+    {
+        agent.isStopped = true;
+
+        MonoBehaviour[] children = GetComponentsInChildren<MonoBehaviour>();
+        foreach (MonoBehaviour child in children)
+        {
+            child.StopAllCoroutines();
+        }
+    }
+
+    public void Die()
+    {
+        Stop();
+        IsDead = true;
+
+        aliveBody.SetActive(false);
+        deadBody.SetActive(true);
     }
 
     private void RandomTasks()
@@ -74,74 +121,28 @@ public class Agent : MonoBehaviour
         }
 
         if (CurrentTask == oldTask)
-            AccomplishTask();
+            StartTask();
         else
             agent.destination = CurrentTask.transform.position;
     }
 
-    public void AccomplishTask()
-    {
-        StartCoroutine(DoTask());
-    }
-
-    private IEnumerator DoTask()
+    private IEnumerator AccomplishTask()
     {
         yield return new WaitForSeconds(CurrentTask.taskTime);
 
-        TaskAccomplished();
+        EndTask();
     }
 
-    private void TaskAccomplished()
+    private void EndTask()
     {
         tasks.Remove(CurrentTask);
         NextTask();
     }
 
-    public void Die()
-    {
-        Stop();
-        IsDead = true;
-
-        aliveBody.SetActive(false);
-        deadBody.SetActive(true);
-    }
-
-    public void AddAgentSeen(Agent agent, Location location)
-    {
-        agentInfo.AddAgentSeen(agent, location);
-        if (name.CompareTo("Red") == 0)
-            Debug.Log(name + " saw " + agent.name + " in " + location.name);
-    }
-
-    public void ReportDead(Agent dead)
-    {
-        SetDead(dead, dead.CurrentLocation);
-        GameManager.Instance.StartMeeting();
-    }
-
-    public void SetDead(Agent agent, Location location)
-    {
-        agentInfo.SetDead(agent, location);
-    }
-
-    public void Stop()
-    {
-        agent.isStopped = true;
-
-        MonoBehaviour[] children = GetComponentsInChildren<MonoBehaviour>();
-        foreach (MonoBehaviour child in children)
-        {
-            child.StopAllCoroutines();
-        }
-    }
-
-    public void SetAgentLocation()
-    {
-        agentInfo.AddAgentLocation(this, CurrentLocation);
-    }
-
+#if UNITY_EDITOR
     protected virtual void OnDrawGizmos()
     {
         Handles.Label(transform.position + new Vector3(-1f, 2f, 1.5f), name, style);
     }
+#endif
 }
