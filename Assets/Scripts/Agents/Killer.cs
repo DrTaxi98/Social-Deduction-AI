@@ -21,12 +21,16 @@ public class Killer : Agent
         yield return new WaitForSeconds(killCooldown);
 
         canKill = true;
+
+        Debugger.Instance.KillCooldownDebug(this);
     }
 
     private void Kill(Agent other)
     {
         other.Die();
         canKill = false;
+
+        Debugger.Instance.KillDebug(this, other);
 
         StartCoroutine(ReportCooldown());
     }

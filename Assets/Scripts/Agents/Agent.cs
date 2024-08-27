@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,7 +9,7 @@ public class Agent : MonoBehaviour
 {
     [Range(1, 10)] public int maxTasks = 5;
 
-    public Color nameTextColor = Color.white;
+    public Color nameTextColor = Color.black;
 
     private NavMeshAgent agent;
 
@@ -18,6 +19,8 @@ public class Agent : MonoBehaviour
 
     private HashSet<PointOfInterest> tasks = new HashSet<PointOfInterest>();
     private AgentInfo agentInfo = new AgentInfo();
+
+    private GUIStyle style = null;
 
     public Color Color { get; private set; }
     public PointOfInterest CurrentTask { get; private set; } = null;
@@ -44,6 +47,8 @@ public class Agent : MonoBehaviour
 
         fov = GetComponentInChildren<FieldOfView>();
 
+        SetGUIStyle();
+
         NextTask();
     }
 
@@ -64,6 +69,8 @@ public class Agent : MonoBehaviour
 
     public void StartTask()
     {
+        Debugger.Instance.TaskDebug(this, CurrentTask, true);
+
         StartCoroutine(AccomplishTask());
     }
 
@@ -91,6 +98,8 @@ public class Agent : MonoBehaviour
 
         aliveBody.SetActive(false);
         deadBody.SetActive(true);
+
+        CurrentTask.RemoveAgent(this);
     }
 
     private void RandomTasks()
@@ -117,6 +126,10 @@ public class Agent : MonoBehaviour
             }
         }
 
+        CurrentTask.AddAgent(this);
+
+        Debugger.Instance.POIDebug(this, CurrentTask);
+
         if (CurrentTask == oldTask)
             StartTask();
         else
@@ -132,7 +145,30 @@ public class Agent : MonoBehaviour
 
     private void EndTask()
     {
+        CurrentTask.RemoveAgent(this);
+
+        Debugger.Instance.TaskDebug(this, CurrentTask, false);
+
         tasks.Remove(CurrentTask);
         NextTask();
     }
+
+    private void SetGUIStyle()
+    {
+        style = new GUIStyle();
+        style.normal.textColor = nameTextColor;
+        style.fontStyle = FontStyle.Bold;
+        style.alignment = TextAnchor.LowerCenter;
+    }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (style != null)
+        {
+            Vector3 position = transform.position + 2f * transform.up;
+            Handles.Label(position, name, style);
+        }
+    }
+#endif
 }

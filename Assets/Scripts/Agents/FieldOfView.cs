@@ -12,12 +12,11 @@ public class FieldOfView : MonoBehaviour
     public LayerMask obstacleMask;
 
     public float transparency = 0.15f;
-    public bool debug = false;
 
     private Agent agent;
     private List<Transform> currentlySeenAgents = new List<Transform>();
     private List<ViewInfo> seenAgents = new List<ViewInfo>();
-    private ViewInfo deadBody = null;
+    private ViewInfo seenDeadBody = null;
 
     private Color losColor;
     private Color fovColor;
@@ -40,9 +39,11 @@ public class FieldOfView : MonoBehaviour
         {
             SeeAgents();
 
-            if (deadBody != null)
+            if (seenDeadBody != null)
             {
-                agent.ReportDeadBody(deadBody.Agent);
+                Debugger.Instance.ReportDebug(agent, seenDeadBody);
+
+                agent.ReportDeadBody(seenDeadBody.Agent);
             }
 
             yield return new WaitForSeconds(resampleTime);
@@ -75,7 +76,7 @@ public class FieldOfView : MonoBehaviour
                         {
                             if (agent.CanReport)
                             {
-                                deadBody = seenAgent;
+                                seenDeadBody = seenAgent;
                             }
                         }
                         else
@@ -93,7 +94,7 @@ public class FieldOfView : MonoBehaviour
                             }
                         }
 
-                        DebugSeenAgent(seenAgent);
+                        Debugger.Instance.FOVDebug(agent, seenAgent);
                     }
                 }
             }
@@ -104,14 +105,6 @@ public class FieldOfView : MonoBehaviour
     {
         angleDeg += transform.eulerAngles.y;
         return new Vector3(Mathf.Sin(angleDeg * Mathf.Deg2Rad), 0, Mathf.Cos(angleDeg * Mathf.Deg2Rad));
-    }
-
-    private void DebugSeenAgent(ViewInfo seenAgent)
-    {
-        if (debug)
-        {
-            Debug.Log(agent.name + " saw " + seenAgent);
-        }
     }
 
 #if UNITY_EDITOR
