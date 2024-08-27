@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class Utils
 {
-    private const double TIMESTAMPS_CLOSE_THRESHOLD = 5d;
+    private const double TIMESTAMPS_CLOSENESS_THRESHOLD = 5d;
 
     public static Color Orange { get; } = Color.red + Color.green / 2;
 
@@ -22,6 +22,6 @@ public static class Utils
 
     public static bool AreTimestampsClose(double t1, double t2)
     {
-        return Math.Abs(t2 - t1) < TIMESTAMPS_CLOSE_THRESHOLD;
+        return Math.Abs(t2 - t1) < TIMESTAMPS_CLOSENESS_THRESHOLD;
     }
 }

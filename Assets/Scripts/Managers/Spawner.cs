@@ -8,30 +8,29 @@ public class Spawner : MonoBehaviour
                                               new Utils.NameColor("Orange", Utils.Orange), new Utils.NameColor("Black", Color.black)
                                             };
 
-    [Range(4, 8)] public int agentsNumber = 5;
-    public GameObject agentToSpawn = null;
-    public GameObject killerToSpawn = null;
+    public GameObject agentPrefab = null;
+    public GameObject killerPrefab = null;
+    public Transform spawnsParent = null;
     public Transform agentsParent = null;
-
-    private Transform spawnsParent = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        spawnsParent = GameObject.FindWithTag("Respawn").transform;
+        if (spawnsParent == null)
+            spawnsParent = GameObject.FindWithTag("Respawn").transform;
 
         Spawn();
     }
 
     private void Spawn()
     {
-        int n = Mathf.Min(agentsNumber, spawnsParent.childCount, agentsNamesColors.Length);
+        int n = Mathf.Min(GameManager.Instance.agentCount, spawnsParent.childCount, agentsNamesColors.Length);
         int killerIndex = Random.Range(0, n);
         for (int i = 0; i < n; i++) {
-            GameObject gameObjectToSpawn = (i == killerIndex) ? killerToSpawn : agentToSpawn;
+            GameObject prefab = (i == killerIndex) ? killerPrefab : agentPrefab;
             Transform spawnTransform = spawnsParent.GetChild(i);
             
-            GameObject agentGameObject = Instantiate(gameObjectToSpawn, spawnTransform.position, spawnTransform.rotation, agentsParent);
+            GameObject agentGameObject = Instantiate(prefab, spawnTransform.position, spawnTransform.rotation, agentsParent);
 
             Agent agent = agentGameObject.GetComponent<Agent>();
             agent.Init(agentsNamesColors[i]);

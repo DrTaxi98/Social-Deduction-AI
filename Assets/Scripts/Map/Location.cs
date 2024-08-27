@@ -5,7 +5,8 @@ public class Location : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Agent agent))
+        Agent agent = other.GetComponentInParent<Agent>();
+        if (agent != null)
         {
             agent.CurrentLocation = this;
         }

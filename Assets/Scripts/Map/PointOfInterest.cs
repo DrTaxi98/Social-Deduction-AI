@@ -16,7 +16,8 @@ public class PointOfInterest : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Agent agent) && agent.CurrentTask == this)
+        Agent agent = other.GetComponentInParent<Agent>();
+        if (agent != null && agent.CurrentTask == this)
         {
             agent.StartTask();
         }

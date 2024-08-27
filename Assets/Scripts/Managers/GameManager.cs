@@ -20,16 +20,18 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    private List<Agent> agents = new List<Agent>();
-    private PointOfInterest[] pois = null;
+    [Range(4, 8)] public int agentCount = 5;
+    public int randomSeed = 0;
 
-    public int RandomSeed { get; private set; } = 0;
+    private List<Agent> agents = new List<Agent>();
+    private Killer killer = null;
+    private PointOfInterest[] pois = null;
 
     private void Init()
     {
-        if (RandomSeed == 0)
-            RandomSeed = (int)System.DateTime.Now.Ticks;
-        Random.InitState(RandomSeed);
+        if (randomSeed == 0)
+            randomSeed = (int)System.DateTime.Now.Ticks;
+        Random.InitState(randomSeed);
     }
 
     // Start is called before the first frame update
@@ -41,6 +43,9 @@ public class GameManager : MonoBehaviour
     public void AddAgent(Agent agent)
     {
         agents.Add(agent);
+
+        if (agent is Killer killer)
+            this.killer = killer;
     }
 
     public HashSet<PointOfInterest> RandomPOIs(int n)
@@ -77,7 +82,7 @@ public class GameManager : MonoBehaviour
             if (!agent.IsDead)
             {
                 agent.Stop();
-                agent.SetAgentLocation();
+                agent.AddSelfLocationInfo();
             }
         }
     }

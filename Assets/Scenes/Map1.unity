@@ -1387,6 +1387,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f24886cd21093e4383765b53a547693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agentCount: 5
+  randomSeed: 0
 --- !u!1 &350853931
 GameObject:
   m_ObjectHideFlags: 0
@@ -3480,9 +3482,9 @@ MonoBehaviour:
     color: {r: 1, g: 0.5, b: 0, a: 1.5}
   - name: Black
     color: {r: 0, g: 0, b: 0, a: 1}
-  agentsNumber: 5
-  agentToSpawn: {fileID: 1236025834115242, guid: 2b886293e281d774c8cdbf0ed31d21c7, type: 3}
-  killerToSpawn: {fileID: 8363202571645819342, guid: 028e5deb268931d4096a07b9c1c38865, type: 3}
+  agentPrefab: {fileID: 1236025834115242, guid: 2b886293e281d774c8cdbf0ed31d21c7, type: 3}
+  killerPrefab: {fileID: 8363202571645819342, guid: 028e5deb268931d4096a07b9c1c38865, type: 3}
+  spawnsParent: {fileID: 508884382}
   agentsParent: {fileID: 350853932}
 --- !u!4 &1026166121
 Transform:

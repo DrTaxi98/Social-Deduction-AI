@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,16 +14,16 @@ public class Agent : MonoBehaviour
 
     private GameObject aliveBody;
     private GameObject deadBody;
+    private FieldOfView fov;
 
     private HashSet<PointOfInterest> tasks = new HashSet<PointOfInterest>();
     private AgentInfo agentInfo = new AgentInfo();
-
-    private GUIStyle style = new GUIStyle();
 
     public Color Color { get; private set; }
     public PointOfInterest CurrentTask { get; private set; } = null;
     public Location CurrentLocation { get; set; } = null;
     public bool IsDead { get; private set; } = false;
+    public bool CanReport { get; protected set; } = true;
 
     public void Init(Utils.NameColor agentColor)
     {
@@ -43,26 +42,24 @@ public class Agent : MonoBehaviour
         aliveBody.GetComponent<Renderer>().material.color = Color;
         deadBody.GetComponent<Renderer>().material.color = Color;
 
-        style.normal.textColor = nameTextColor;
+        fov = GetComponentInChildren<FieldOfView>();
 
         NextTask();
     }
 
-    public void SetAgentLocation()
+    public void AddSelfLocationInfo()
     {
-        agentInfo.AddAgentLocation(this, CurrentLocation);
+        agentInfo.AddAgentLocationInfo(this);
     }
 
-    public void AddAgentSeen(Agent agent, Location location)
+    public void AddAgentSeenInfo(Agent agentSeen)
     {
-        agentInfo.AddAgentSeen(agent, location);
-        if (name.CompareTo("Red") == 0)
-            Debug.Log(name + " saw " + agent.name + " in " + location.name);
+        agentInfo.AddAgentSeenInfo(this, agentSeen);
     }
 
-    public void SetDeadBodyLocation(Agent deadBody, Location location)
+    public void SetDeadBodyInfo(Agent agentSeeing, Agent deadBody)
     {
-        agentInfo.SetDeadBodyLocation(deadBody, location);
+        agentInfo.SetDeadBodyInfo(agentSeeing, deadBody);
     }
 
     public void StartTask()
@@ -72,7 +69,7 @@ public class Agent : MonoBehaviour
 
     public void ReportDeadBody(Agent deadBody)
     {
-        SetDeadBodyLocation(deadBody, deadBody.CurrentLocation);
+        SetDeadBodyInfo(this, deadBody);
         GameManager.Instance.StartMeeting();
     }
 
@@ -138,11 +135,4 @@ public class Agent : MonoBehaviour
         tasks.Remove(CurrentTask);
         NextTask();
     }
-
-#if UNITY_EDITOR
-    protected virtual void OnDrawGizmos()
-    {
-        Handles.Label(transform.position + new Vector3(-1f, 2f, 1.5f), name, style);
-    }
-#endif
 }

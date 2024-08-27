@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class Killer : Agent
 {
-    [Range(1f, 30f)] public float killCooldown = 20f;
+    [Range(0f, 30f)] public float killCooldown = 20f;
+    [Range(0f, 30f)] public float reportCooldown = 5f;
 
     private bool canKill = false;
 
@@ -26,13 +27,28 @@ public class Killer : Agent
     {
         other.Die();
         canKill = false;
+
+        StartCoroutine(ReportCooldown());
+    }
+
+    private IEnumerator ReportCooldown()
+    {
+        CanReport = false;
+
+        yield return new WaitForSeconds(reportCooldown);
+
+        CanReport = true;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (canKill && other.TryGetComponent(out Agent otherAgent))
+        if (canKill)
         {
-            Kill(otherAgent);
+            Agent otherAgent = other.GetComponentInParent<Agent>();
+            if (otherAgent != null && !otherAgent.IsDead)
+            {
+                Kill(otherAgent);
+            }
         }
     }
 }
