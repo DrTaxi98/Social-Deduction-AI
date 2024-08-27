@@ -15,11 +15,12 @@ public class FieldOfView : MonoBehaviour
 
     private Agent agent;
     private List<Transform> currentlySeenAgents = new List<Transform>();
-    private List<ViewInfo> seenAgents = new List<ViewInfo>();
-    private ViewInfo seenDeadBody = null;
 
     private Color losColor;
     private Color fovColor;
+
+    public List<ViewInfo> SeenAgentInfoList { get; } = new List<ViewInfo>();
+    public ViewInfo DeadBodyInfo { get; private set; } = null;
 
     // Start is called before the first frame update
     void Start()
@@ -39,11 +40,9 @@ public class FieldOfView : MonoBehaviour
         {
             SeeAgents();
 
-            if (seenDeadBody != null)
+            if (DeadBodyInfo != null)
             {
-                Debugger.Instance.ReportDebug(agent, seenDeadBody);
-
-                agent.ReportDeadBody(seenDeadBody.Agent);
+                agent.ReportDeadBody(DeadBodyInfo);
             }
 
             yield return new WaitForSeconds(resampleTime);
@@ -70,31 +69,29 @@ public class FieldOfView : MonoBehaviour
                         currentlySeenAgents.Add(otherTransform);
 
                         Agent otherAgent = otherTransform.GetComponentInParent<Agent>();
-                        ViewInfo seenAgent = new ViewInfo(otherAgent);
+                        ViewInfo seenAgentInfo = new ViewInfo(agent, otherAgent);
 
                         if (otherAgent.IsDead)
                         {
                             if (agent.CanReport)
                             {
-                                seenDeadBody = seenAgent;
+                                DeadBodyInfo = seenAgentInfo;
                             }
                         }
                         else
                         {
-                            int index = seenAgents.LastIndexOf(seenAgent);
-                            if (index != -1 &&
-                                Utils.AreTimestampsClose(seenAgents[index].ToTimestamp, seenAgent.ToTimestamp))
+                            int index = SeenAgentInfoList.LastIndexOf(seenAgentInfo);
+                            if (index != -1 && SeenAgentInfoList[index].UpdateToTimestamp(seenAgentInfo))
                             {
-                                seenAgents[index].ToTimestamp = seenAgent.ToTimestamp;
-                                seenAgent = seenAgents[index];
+                                seenAgentInfo = SeenAgentInfoList[index];
                             }
                             else
                             {
-                                seenAgents.Add(seenAgent);
+                                SeenAgentInfoList.Add(seenAgentInfo);
                             }
                         }
 
-                        Debugger.Instance.FOVDebug(agent, seenAgent);
+                        Debugger.Instance.FOVDebug(agent, seenAgentInfo);
                     }
                 }
             }

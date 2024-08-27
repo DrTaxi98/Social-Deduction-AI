@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
             if (!agent.IsDead)
             {
                 agent.Stop();
-                agent.AddSelfLocationInfo();
+                agent.SetSelfInfo();
             }
         }
     }

@@ -43,10 +43,10 @@ public class Debugger : MonoBehaviour
             Debug.Log(agent.name + (start ? " started" : " ended") + " task at " + poi.name);
     }
 
-    public void FOVDebug(Agent agent, ViewInfo seenAgent)
+    public void FOVDebug(Agent agent, ViewInfo seenAgentInfo)
     {
         if (fovDebug)
-            Debug.Log(agent.name + " saw " + seenAgent);
+            Debug.Log(agent.name + " saw " + seenAgentInfo);
     }
 
     public void KillCooldownDebug(Killer killer)
@@ -61,9 +61,9 @@ public class Debugger : MonoBehaviour
             Debug.Log(killer.name + " killed " + agent.name);
     }
 
-    public void ReportDebug(Agent agent, ViewInfo seenDeadBody)
+    public void ReportDebug(Agent agent, ViewInfo deadBodyInfo)
     {
         if (reportDebug)
-            Debug.Log(agent.name + " reported " + seenDeadBody);
+            Debug.Log(agent.name + " reported " + deadBodyInfo);
     }
 }

@@ -4,34 +4,49 @@ using UnityEngine;
 
 public class ViewInfo
 {
-    public Agent Agent { get; private set; }
-    public Location Location { get; private set; }
-    public double FromTimestamp { get; private set; }
-    public double ToTimestamp { get; set; }
+    public Agent SeeingAgent { get; }
+    public Agent SeenAgent { get; }
+    public Location Location { get; }
+    public double FromTimestamp { get; }
+    public double ToTimestamp { get; private set; }
 
-    public ViewInfo(Agent agent)
+    public ViewInfo(Agent self) : this(self, self) { }
+
+    public ViewInfo(Agent seeingAgent, Agent seenAgent)
     {
-        Agent = agent;
-        Location = agent.CurrentLocation;
+        SeeingAgent = seeingAgent;
+        SeenAgent = seenAgent;
+        Location = seenAgent.CurrentLocation;
         FromTimestamp = Time.timeAsDouble;
         ToTimestamp = FromTimestamp;
     }
 
+    public bool UpdateToTimestamp(ViewInfo other)
+    {
+        bool update = Equals(other) && Utils.AreTimestampsClose(ToTimestamp, other.ToTimestamp);
+        if (update)
+            ToTimestamp = other.ToTimestamp;
+
+        return update;
+    }
+
     public override bool Equals(object obj)
     {
-        return obj is ViewInfo info &&
-               EqualityComparer<Agent>.Default.Equals(Agent, info.Agent) &&
-               EqualityComparer<Location>.Default.Equals(Location, info.Location);
+        return obj is ViewInfo other &&
+               EqualityComparer<Agent>.Default.Equals(SeeingAgent, other.SeeingAgent) &&
+               EqualityComparer<Agent>.Default.Equals(SeenAgent, other.SeenAgent) &&
+               EqualityComparer<Location>.Default.Equals(Location, other.Location);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Agent, Location);
+        return HashCode.Combine(SeeingAgent, SeenAgent, Location);
     }
 
     public override string ToString()
     {
-        return Agent.name + (Agent.IsDead ? "'s dead body" : "") +
+        return (SeeingAgent == SeenAgent) ? "" : (SeeingAgent.name + " saw ") +
+            SeenAgent.name + (SeenAgent.IsDead ? "'s dead body" : "") +
             " in " + Location.name +
             ((FromTimestamp == ToTimestamp) ? " at " : (" from " + FromTimestamp.ToString("N1") + " s to ")) +
             ToTimestamp.ToString("N1") + " s";

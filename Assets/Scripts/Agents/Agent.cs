@@ -12,13 +12,12 @@ public class Agent : MonoBehaviour
     public Color nameTextColor = Color.black;
 
     private NavMeshAgent agent;
-
     private GameObject aliveBody;
     private GameObject deadBody;
     private FieldOfView fov;
 
     private HashSet<PointOfInterest> tasks = new HashSet<PointOfInterest>();
-    private AgentInfo agentInfo = new AgentInfo();
+    private ViewInfo selfInfo = null;
 
     private GUIStyle style = null;
 
@@ -52,19 +51,9 @@ public class Agent : MonoBehaviour
         NextTask();
     }
 
-    public void AddSelfLocationInfo()
+    public void SetSelfInfo()
     {
-        agentInfo.AddAgentLocationInfo(this);
-    }
-
-    public void AddAgentSeenInfo(Agent agentSeen)
-    {
-        agentInfo.AddAgentSeenInfo(this, agentSeen);
-    }
-
-    public void SetDeadBodyInfo(Agent agentSeeing, Agent deadBody)
-    {
-        agentInfo.SetDeadBodyInfo(agentSeeing, deadBody);
+        selfInfo = new ViewInfo(this);
     }
 
     public void StartTask()
@@ -74,9 +63,10 @@ public class Agent : MonoBehaviour
         StartCoroutine(AccomplishTask());
     }
 
-    public void ReportDeadBody(Agent deadBody)
+    public void ReportDeadBody(ViewInfo deadBodyInfo)
     {
-        SetDeadBodyInfo(this, deadBody);
+        Debugger.Instance.ReportDebug(this, deadBodyInfo);
+
         GameManager.Instance.StartMeeting();
     }
 
