@@ -15,6 +15,7 @@ public class Agent : MonoBehaviour
     private GameObject aliveBody;
     private GameObject deadBody;
     private FieldOfView fov;
+    private RBSAgent meetingAgent;
 
     private HashSet<PointOfInterest> tasks = new HashSet<PointOfInterest>();
     private ViewInfo selfInfo = null;
@@ -45,6 +46,7 @@ public class Agent : MonoBehaviour
         deadBody.GetComponent<Renderer>().material.color = Color;
 
         fov = GetComponentInChildren<FieldOfView>();
+        // meetingAgent = GetComponent<RBSAgent>();
 
         SetGUIStyle();
 
@@ -67,7 +69,7 @@ public class Agent : MonoBehaviour
     {
         Debugger.Instance.ReportDebug(this, deadBodyInfo);
 
-        GameManager.Instance.StartMeeting();
+        GameManager.Instance.StartMeeting(this);
     }
 
     public void Stop()
@@ -90,6 +92,12 @@ public class Agent : MonoBehaviour
         deadBody.SetActive(true);
 
         CurrentTask.RemoveAgent(this);
+    }
+
+    public string TakeTurnInMeeting()
+    {
+        // meetingAgent.TakeTurn();
+        return "I am " + ((this is Killer) ? "" : "not ") + "the killer.";
     }
 
     private void RandomTasks()

@@ -8,6 +8,14 @@ public class CameraController : MonoBehaviour
     public Vector3 min = new Vector3(-16f, 6f, -20f);
     public Vector3 max = new Vector3(16f, 30f, 6f);
 
+    private Vector3 defaultPosition;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        defaultPosition = transform.position;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -15,9 +23,7 @@ public class CameraController : MonoBehaviour
         movement += Zoom();
         Vector3 newPosition = transform.position + movement * Time.deltaTime;
 
-        newPosition = Clamp(newPosition);
-
-        transform.position = newPosition;
+        SetPosition(newPosition);
     }
 
     private Vector3 Move()
@@ -35,6 +41,11 @@ public class CameraController : MonoBehaviour
         return zoom;
     }
 
+    private void SetPosition(Vector3 position)
+    {
+        transform.position = Clamp(position);
+    }
+
     private Vector3 Clamp(Vector3 vector)
     {
         vector.x = Mathf.Clamp(vector.x, min.x, max.x);
@@ -42,5 +53,15 @@ public class CameraController : MonoBehaviour
         vector.z = Mathf.Clamp(vector.z, min.z, max.z);
 
         return vector;
+    }
+
+    private void ResetCamera()
+    {
+        SetPosition(defaultPosition);
+    }
+
+    private void OnDisable()
+    {
+        ResetCamera();
     }
 }

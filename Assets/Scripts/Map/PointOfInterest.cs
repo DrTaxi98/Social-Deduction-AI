@@ -11,7 +11,8 @@ public class PointOfInterest : MonoBehaviour
     private string poiNumber;
     private GUIStyle style = null;
     private List<Agent> agents = new List<Agent>();
-    private Color color = Color.clear;
+    private Color defaultColor = Color.clear;
+    private Color color;
     private float radius;
 
     // Start is called before the first frame update
@@ -19,6 +20,7 @@ public class PointOfInterest : MonoBehaviour
     {
         poiNumber = name.Split(' ').Last();
         radius = transform.lossyScale.x / 2;
+        color = defaultColor;
         SetGUIStyle();
     }
 
@@ -35,7 +37,7 @@ public class PointOfInterest : MonoBehaviour
         if (agents.Count > 0)
             color = agents.Last().Color;
         else
-            color = Color.clear;
+            color = defaultColor;
     }
 
     private void SetGUIStyle()

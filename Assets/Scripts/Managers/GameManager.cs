@@ -23,9 +23,22 @@ public class GameManager : MonoBehaviour
     [Range(4, 8)] public int agentCount = 5;
     public int randomSeed = 0;
 
+    public Meeting meeting;
+
     private List<Agent> agents = new List<Agent>();
-    private Killer killer = null;
     private PointOfInterest[] pois = null;
+
+    private CameraController cameraController;
+
+    private List<Agent> AliveAgents
+    {
+        get
+        {
+            List<Agent> aliveAgents = new List<Agent>(agents);
+            aliveAgents.RemoveAll((agent) => agent.IsDead);
+            return aliveAgents;
+        }
+    }
 
     private void Init()
     {
@@ -38,14 +51,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         pois = FindObjectsByType<PointOfInterest>(FindObjectsSortMode.InstanceID);
+        cameraController = Camera.main.GetComponentInParent<CameraController>();
     }
 
     public void AddAgent(Agent agent)
     {
         agents.Add(agent);
-
-        if (agent is Killer killer)
-            this.killer = killer;
     }
 
     public HashSet<PointOfInterest> RandomPOIs(int n)
@@ -63,10 +74,11 @@ public class GameManager : MonoBehaviour
         return randomPOIs;
     }
 
-    public void StartMeeting()
+    public void StartMeeting(Agent agent)
     {
         StopAgents();
-        // RBS.Start();
+        cameraController.enabled = false;
+        meeting.StartMeeting(AliveAgents, agent);
     }
 
     private PointOfInterest RandomPOI()
