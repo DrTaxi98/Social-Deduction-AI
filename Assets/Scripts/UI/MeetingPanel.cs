@@ -9,8 +9,8 @@ public class MeetingPanel : MonoBehaviour
     public Scrollbar verticalScrollbar;
 
     private RectTransform contentRectTransform;
-    private int textBoxCount = 0;
     private float offset;
+    private int textBoxCount = 0;
 
     private void Awake()
     {
@@ -21,7 +21,7 @@ public class MeetingPanel : MonoBehaviour
     public void DisplayAgentMessage(Agent agent, string message)
     {
         GameObject textBoxGameObject = Instantiate(textBoxPrefab, content);
-        textBoxGameObject.transform.Translate(textBoxCount * offset * -textBoxPrefab.transform.up);
+        textBoxGameObject.transform.localPosition += textBoxCount * offset * -textBoxPrefab.transform.up;
 
         TextBox textBox = textBoxGameObject.GetComponent<TextBox>();
         textBox.SetText(agent, message);

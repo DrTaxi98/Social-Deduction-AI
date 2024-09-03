@@ -4,21 +4,19 @@ public class RBSDB
 {
     private List<RBSDatum> data;
 
-    public RBSDB() { ; }
+    public RBSDB()
+    {
+        data = new List<RBSDatum>();
+    }
 
     public void AddDatum(RBSDatum datum)
     {
         data.Add(datum);
     }
 
-    public bool Match(IRBSQuery q)
+    public List<RBSDatum> Match(IRBSQuery q)
     {
-        foreach (RBSDatum d in data)
-        {
-            if (d.Match(q))
-                return true;
-        }
-        return false;
+        return q.Match(data);
     }
 
     public override string ToString()

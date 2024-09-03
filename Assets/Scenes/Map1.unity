@@ -1536,6 +1536,7 @@ GameObject:
   m_Component:
   - component: {fileID: 348709344}
   - component: {fileID: 348709345}
+  - component: {fileID: 348709346}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -1573,6 +1574,18 @@ MonoBehaviour:
   agentCount: 5
   randomSeed: 0
   meeting: {fileID: 1436781949}
+--- !u!114 &348709346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348709343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a13a5285523ffd479b77319ff29ce66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &350853931
 GameObject:
   m_ObjectHideFlags: 0
@@ -5216,6 +5229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e20e94b5c40e9f47995b576c9e4c495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxTurn: 20
   meetingPanel: {fileID: 2099013590}
 --- !u!1001 &1441574338
 PrefabInstance:
@@ -5609,6 +5623,8 @@ MonoBehaviour:
   fovDebug: 0
   killDebug: 0
   reportDebug: 0
+  rbsDebug: 0
+  meetingDebug: 0
 --- !u!1001 &1492420129
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6791,7 +6807,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 314323745}
   m_HandleRect: {fileID: 314323744}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

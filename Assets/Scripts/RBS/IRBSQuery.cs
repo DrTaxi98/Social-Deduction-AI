@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 
 public interface IRBSQuery
 {
-    public bool Match(List<RBSDatum> data)
+    public List<RBSDatum> Match(List<RBSDatum> data)
     {
-        return Query(data).Any();
+        return data.FindAll(Predicate);
     }
 
-    protected abstract IEnumerable<object> Query(List<RBSDatum> data);
+    public abstract bool Predicate(RBSDatum datum);
 }

@@ -14,12 +14,14 @@ public class RBS
         rules.Add(rule);
     }
 
-    public void Run()
+    public bool Run()
     {
         foreach (RBSRule r in rules)
         {
             if (r.Fire())
-                return;
+                return true;
         }
+
+        return false;
     }
 }

@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bb7b1cefd39e384fa34b8abdbe0aa6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTasks: 5
+  maxTaskCount: 5
   nameTextColor: {r: 1, g: 0, b: 0, a: 1}
   killCooldown: 20
   reportCooldown: 5

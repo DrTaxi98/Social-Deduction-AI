@@ -19,8 +19,8 @@ public class FieldOfView : MonoBehaviour
     private Color losColor;
     private Color fovColor;
 
-    public List<ViewInfo> SeenAgentInfoList { get; } = new List<ViewInfo>();
-    public ViewInfo DeadBodyInfo { get; private set; } = null;
+    public List<SeeingInfo> SeeingInfo { get; } = new List<SeeingInfo>();
+    public DeadBodyInfo DeadBodyInfo { get; private set; } = null;
 
     // Start is called before the first frame update
     void Start()
@@ -69,29 +69,35 @@ public class FieldOfView : MonoBehaviour
                         currentlySeenAgents.Add(otherTransform);
 
                         Agent otherAgent = otherTransform.GetComponentInParent<Agent>();
-                        ViewInfo seenAgentInfo = new ViewInfo(agent, otherAgent);
+                        ViewInfo info;
 
                         if (otherAgent.IsDead)
                         {
+                            DeadBodyInfo deadBodyInfo = new DeadBodyInfo(agent, otherAgent);
+                            info = deadBodyInfo;
+
                             if (agent.CanReport)
                             {
-                                DeadBodyInfo = seenAgentInfo;
+                                DeadBodyInfo = deadBodyInfo;
                             }
                         }
                         else
                         {
-                            int index = SeenAgentInfoList.LastIndexOf(seenAgentInfo);
-                            if (index != -1 && SeenAgentInfoList[index].UpdateToTimestamp(seenAgentInfo))
+                            SeeingInfo agentSeenInfo = new SeeingInfo(agent, otherAgent);
+                            int index = SeeingInfo.LastIndexOf(agentSeenInfo);
+
+                            if (index != -1 && SeeingInfo[index].UpdateSeeingInfo(agentSeenInfo))
                             {
-                                seenAgentInfo = SeenAgentInfoList[index];
+                                info = SeeingInfo[index];
                             }
                             else
                             {
-                                SeenAgentInfoList.Add(seenAgentInfo);
+                                SeeingInfo.Add(agentSeenInfo);
+                                info = agentSeenInfo;
                             }
                         }
 
-                        Debugger.Instance.FOVDebug(agent, seenAgentInfo);
+                        Debugger.Instance.FOVDebug(info);
                     }
                 }
             }

@@ -24,6 +24,8 @@ public class Debugger : MonoBehaviour
     public bool fovDebug = false;
     public bool killDebug = false;
     public bool reportDebug = false;
+    public bool rbsDebug = false;
+    public bool meetingDebug = false;
 
     public void LocationDebug(Agent agent, Location location)
     {
@@ -43,10 +45,10 @@ public class Debugger : MonoBehaviour
             Debug.Log(agent.name + (start ? " started" : " ended") + " task at " + poi.name);
     }
 
-    public void FOVDebug(Agent agent, ViewInfo seenAgentInfo)
+    public void FOVDebug(ViewInfo info)
     {
         if (fovDebug)
-            Debug.Log(agent.name + " saw " + seenAgentInfo);
+            Debug.Log(info);
     }
 
     public void KillCooldownDebug(Killer killer)
@@ -61,9 +63,36 @@ public class Debugger : MonoBehaviour
             Debug.Log(killer.name + " killed " + agent.name);
     }
 
-    public void ReportDebug(Agent agent, ViewInfo deadBodyInfo)
+    public void ReportDebug(DeadBodyInfo deadBodyInfo)
     {
         if (reportDebug)
-            Debug.Log(agent.name + " reported " + deadBodyInfo);
+            Debug.Log(deadBodyInfo.SeeingAgent.name + " reported " +
+                deadBodyInfo.Agent.name + "'s dead body in " +
+                deadBodyInfo.Location + " " +
+                deadBodyInfo.TimeInterval);
+    }
+
+    public void RBSDBDebug(Agent agent, RBSDB database)
+    {
+        if (rbsDebug)
+            Debug.Log(agent.name + " database:\n" + database);
+    }
+
+    public void RBSDatumDebug(Agent agent, RBSDatum datum)
+    {
+        if (rbsDebug)
+            Debug.Log(agent.name + " new datum:\n" + datum);
+    }
+
+    public void SuspectDebug(Agent suspect, int suspectLevel)
+    {
+        if (meetingDebug)
+            Debug.Log(suspect.name + " suspect level: " + suspectLevel);
+    }
+
+    public void VoteDebug(Agent agent, int votes)
+    {
+        if (meetingDebug)
+            Debug.Log(agent.name + " received " + votes + " vote" + ((votes == 1) ? "" : "s"));
     }
 }

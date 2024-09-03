@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
 
     private CameraController cameraController;
 
+    public Killer Killer { get; private set; }
+
     private List<Agent> AliveAgents
     {
         get
@@ -57,6 +59,8 @@ public class GameManager : MonoBehaviour
     public void AddAgent(Agent agent)
     {
         agents.Add(agent);
+        if (agent is Killer killer)
+            Killer = killer;
     }
 
     public HashSet<PointOfInterest> RandomPOIs(int n)
@@ -94,7 +98,7 @@ public class GameManager : MonoBehaviour
             if (!agent.IsDead)
             {
                 agent.Stop();
-                agent.SetSelfInfo();
+                agent.AddMeetingData();
             }
         }
     }

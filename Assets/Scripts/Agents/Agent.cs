@@ -7,7 +7,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Agent : MonoBehaviour
 {
-    [Range(1, 10)] public int maxTasks = 5;
+    [Range(1, 10)] public int maxTaskCount = 5;
 
     public Color nameTextColor = Color.black;
 
@@ -15,10 +15,9 @@ public class Agent : MonoBehaviour
     private GameObject aliveBody;
     private GameObject deadBody;
     private FieldOfView fov;
-    private RBSAgent meetingAgent;
 
     private HashSet<PointOfInterest> tasks = new HashSet<PointOfInterest>();
-    private ViewInfo selfInfo = null;
+    private LocationInfo selfInfo = null;
 
     private GUIStyle style = null;
 
@@ -27,6 +26,7 @@ public class Agent : MonoBehaviour
     public Location CurrentLocation { get; set; } = null;
     public bool IsDead { get; private set; } = false;
     public bool CanReport { get; protected set; } = true;
+    public RBSAgent MeetingAgent { get; private set; }
 
     public void Init(Utils.NameColor agentColor)
     {
@@ -46,16 +46,11 @@ public class Agent : MonoBehaviour
         deadBody.GetComponent<Renderer>().material.color = Color;
 
         fov = GetComponentInChildren<FieldOfView>();
-        // meetingAgent = GetComponent<RBSAgent>();
+        MeetingAgent = new RBSAgent(this);
 
         SetGUIStyle();
 
         NextTask();
-    }
-
-    public void SetSelfInfo()
-    {
-        selfInfo = new ViewInfo(this);
     }
 
     public void StartTask()
@@ -65,9 +60,9 @@ public class Agent : MonoBehaviour
         StartCoroutine(AccomplishTask());
     }
 
-    public void ReportDeadBody(ViewInfo deadBodyInfo)
+    public void ReportDeadBody(DeadBodyInfo deadBodyInfo)
     {
-        Debugger.Instance.ReportDebug(this, deadBodyInfo);
+        Debugger.Instance.ReportDebug(deadBodyInfo);
 
         GameManager.Instance.StartMeeting(this);
     }
@@ -94,15 +89,15 @@ public class Agent : MonoBehaviour
         CurrentTask.RemoveAgent(this);
     }
 
-    public string TakeTurnInMeeting()
+    public void AddMeetingData()
     {
-        // meetingAgent.TakeTurn();
-        return "I am " + ((this is Killer) ? "" : "not ") + "the killer.";
+        SetSelfInfo();
+        MeetingAgent.AddInfo(fov.SeeingInfo, fov.DeadBodyInfo, selfInfo);
     }
 
     private void RandomTasks()
     {
-        tasks = GameManager.Instance.RandomPOIs(maxTasks);
+        tasks = GameManager.Instance.RandomPOIs(maxTaskCount);
     }
 
     private void NextTask()
@@ -149,6 +144,11 @@ public class Agent : MonoBehaviour
 
         tasks.Remove(CurrentTask);
         NextTask();
+    }
+
+    private void SetSelfInfo()
+    {
+        selfInfo = new LocationInfo(this);
     }
 
     private void SetGUIStyle()

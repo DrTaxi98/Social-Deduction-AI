@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Location : MonoBehaviour
 {
+    private const float LOCATION_CLOSE_THRESHOLD = 15f;
+
     private string locationName;
     private GUIStyle style = null;
 
@@ -13,6 +15,12 @@ public class Location : MonoBehaviour
     {
         locationName = name.Split(' ').Last();
         SetGUIStyle();
+    }
+
+    public bool CloseTo(Location otherLocation)
+    {
+        float distance = Vector3.Distance(transform.position, otherLocation.transform.position);
+        return distance < LOCATION_CLOSE_THRESHOLD;
     }
 
     private void SetGUIStyle()

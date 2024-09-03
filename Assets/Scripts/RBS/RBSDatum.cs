@@ -1,22 +1,14 @@
-using System;
-
 public class RBSDatum
 {
-    public string id;
-    public object value; // a value or another datum
+    public object value;
 
-    public RBSDatum(string s)
+    public RBSDatum(object value)
     {
-        id = s;
-    }
-
-    public bool Match(IRBSQuery q)
-    {
-        throw new Exception("unimplemented");
+        this.value = value;
     }
 
     public override string ToString()
     {
-        return "( " + id + " " + value.ToString() + " )";
+        return value.ToString();
     }
 }
