@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Debugger : MonoBehaviour
@@ -18,81 +19,87 @@ public class Debugger : MonoBehaviour
     }
     #endregion
 
-    public bool locationDebug = false;
-    public bool poiDebug = false;
-    public bool taskDebug = false;
-    public bool fovDebug = false;
-    public bool killDebug = false;
-    public bool reportDebug = false;
-    public bool rbsDebug = false;
-    public bool meetingDebug = false;
+    [Flags]
+    public enum DebugFlags
+    {
+        Location = 1 << 0,
+        POI = 1 << 1,
+        Task = 1 << 2,
+        FOV = 1 << 3,
+        Kill = 1 << 4,
+        Report = 1 << 5,
+        RBS = 1 << 6,
+        Meeting = 1 << 7
+    }
+
+    public DebugFlags debugFlags = 0;
 
     public void LocationDebug(Agent agent, Location location)
     {
-        if (locationDebug)
+        if (debugFlags.HasFlag(DebugFlags.Location))
             Debug.Log(agent.name + " in " + location.name);
     }
 
     public void POIDebug(Agent agent, PointOfInterest poi)
     {
-        if (poiDebug)
+        if (debugFlags.HasFlag(DebugFlags.POI))
             Debug.Log(agent.name + " to " + poi.name);
     }
 
     public void TaskDebug(Agent agent, PointOfInterest poi, bool start)
     {
-        if (taskDebug)
+        if (debugFlags.HasFlag(DebugFlags.Task))
             Debug.Log(agent.name + (start ? " started" : " ended") + " task at " + poi.name);
     }
 
     public void FOVDebug(ViewInfo info)
     {
-        if (fovDebug)
+        if (debugFlags.HasFlag(DebugFlags.FOV))
             Debug.Log(info);
     }
 
     public void KillCooldownDebug(Killer killer)
     {
-        if (killDebug)
+        if (debugFlags.HasFlag(DebugFlags.Kill))
             Debug.Log(killer.name + " can kill");
     }
 
     public void KillDebug(Killer killer, Agent agent)
     {
-        if (killDebug)
+        if (debugFlags.HasFlag(DebugFlags.Kill))
             Debug.Log(killer.name + " killed " + agent.name);
     }
 
     public void ReportDebug(DeadBodyInfo deadBodyInfo)
     {
-        if (reportDebug)
+        if (debugFlags.HasFlag(DebugFlags.Report))
             Debug.Log(deadBodyInfo.SeeingAgent.name + " reported " +
                 deadBodyInfo.Agent.name + "'s dead body in " +
-                deadBodyInfo.Location + " " +
+                deadBodyInfo.Location.name + " " +
                 deadBodyInfo.TimeInterval);
     }
 
     public void RBSDBDebug(Agent agent, RBSDB database)
     {
-        if (rbsDebug)
+        if (debugFlags.HasFlag(DebugFlags.RBS))
             Debug.Log(agent.name + " database:\n" + database);
     }
 
     public void RBSDatumDebug(Agent agent, RBSDatum datum)
     {
-        if (rbsDebug)
+        if (debugFlags.HasFlag(DebugFlags.RBS))
             Debug.Log(agent.name + " new datum:\n" + datum);
     }
 
     public void SuspectDebug(Agent suspect, int suspectLevel)
     {
-        if (meetingDebug)
+        if (debugFlags.HasFlag(DebugFlags.Meeting))
             Debug.Log(suspect.name + " suspect level: " + suspectLevel);
     }
 
     public void VoteDebug(Agent agent, int votes)
     {
-        if (meetingDebug)
+        if (debugFlags.HasFlag(DebugFlags.Meeting))
             Debug.Log(agent.name + " received " + votes + " vote" + ((votes == 1) ? "" : "s"));
     }
 }

@@ -31,6 +31,7 @@ public class Meeting : MonoBehaviour
 
         foreach (Agent agent in AliveAgents)
         {
+            agent.AddMeetingData();
             votes.Add(agent, 0);
         }
 

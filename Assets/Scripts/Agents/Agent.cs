@@ -89,9 +89,13 @@ public class Agent : MonoBehaviour
         CurrentTask.RemoveAgent(this);
     }
 
+    public void SetSelfInfo()
+    {
+        selfInfo = new LocationInfo(this);
+    }
+
     public void AddMeetingData()
     {
-        SetSelfInfo();
         MeetingAgent.AddInfo(fov.SeeingInfo, fov.DeadBodyInfo, selfInfo);
     }
 
@@ -144,11 +148,6 @@ public class Agent : MonoBehaviour
 
         tasks.Remove(CurrentTask);
         NextTask();
-    }
-
-    private void SetSelfInfo()
-    {
-        selfInfo = new LocationInfo(this);
     }
 
     private void SetGUIStyle()

@@ -5,8 +5,8 @@ public class RBSAgent
     private RBSDB database;
     private RBSManager manager;
 
-    private RBSDatum deadBodyInfo;
-    private RBSDatum selfInfo;
+    private RBSDatum deadBodyInfo = null;
+    private RBSDatum selfInfo = null;
 
     public Agent Agent { get; }
     public int SuspectLevel { get; private set; }
@@ -28,10 +28,13 @@ public class RBSAgent
             database.AddDatum(datum);
         }
 
-        this.deadBodyInfo = new RBSDatum(deadBodyInfo);
-        this.selfInfo = new RBSDatum(selfInfo);
+        if (deadBodyInfo != null)
+        {
+            this.deadBodyInfo = new RBSDatum(deadBodyInfo);
+            database.AddDatum(this.deadBodyInfo);
+        }
 
-        database.AddDatum(this.deadBodyInfo);
+        this.selfInfo = new RBSDatum(selfInfo);
         database.AddDatum(this.selfInfo);
 
         Debugger.Instance.RBSDBDebug(Agent, database);
@@ -61,7 +64,8 @@ public class RBSAgent
 
     public void ShareDeadBodyInfo()
     {
-        ShareInfo(deadBodyInfo);
+        if (deadBodyInfo != null)
+            ShareInfo(deadBodyInfo);
     }
 
     public void ShareSelfInfo()
