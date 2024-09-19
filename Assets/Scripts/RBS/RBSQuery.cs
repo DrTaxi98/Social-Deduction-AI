@@ -1,28 +1,28 @@
 public abstract class RBSQuery : IRBSQuery
 {
-    public static RBSQueryDeadBody DeadBody() =>
+    public static RBSQueryDeadBody DeadBody =>
         new RBSQueryDeadBody();
-    public static RBSQueryDeadAlive DeadAlive() =>
+    public static RBSQueryDeadAlive DeadAlive =>
         new RBSQueryDeadAlive();
-    public static RBSQueryLocationInfo LocationInfo() =>
+    public static RBSQueryLocationInfo LocationInfo =>
         new RBSQueryLocationInfo();
-    public static RBSQueryAgentInfo AgentInfo() =>
+    public static RBSQueryAgentInfo AgentInfo =>
         new RBSQueryAgentInfo();
-    public static RBSQueryLocationTime LocationTime() =>
+    public static RBSQueryLocationTime LocationTime =>
         new RBSQueryLocationTime();
-    public static RBSQuerySeenLocationTime SeenLocationTime() =>
+    public static RBSQuerySeenLocationTime SeenLocationTime =>
         new RBSQuerySeenLocationTime();
-    public static RBSQueryDistantLocationTime DistantLocationTime() =>
+    public static RBSQueryDistantLocationTime DistantLocationTime =>
         new RBSQueryDistantLocationTime();
-    public static RBSQueryCloseAgents CloseAgents() =>
+    public static RBSQueryCloseAgents CloseAgents =>
         new RBSQueryCloseAgents();
-    public static RBSQueryCloseDeadBody CloseDeadBody() =>
+    public static RBSQueryCloseDeadBody CloseDeadBody =>
         new RBSQueryCloseDeadBody();
-    public static RBSQueryCloseDeadAlive CloseDeadAlive() =>
+    public static RBSQueryCloseDeadAlive CloseDeadAlive =>
         new RBSQueryCloseDeadAlive();
-    public static RBSQueryDistant Distant() =>
+    public static RBSQueryDistant Distant =>
         new RBSQueryDistant();
-    public static RBSQueryTruthful Truthful() =>
+    public static RBSQueryTruthful Truthful =>
         new RBSQueryTruthful();
 
     public abstract bool Predicate(RBSDatum datum);
@@ -67,12 +67,16 @@ public abstract class RBSQuery : IRBSQuery
         }
     }
 
-    // Condition Queries
+    // Binded Queries (Condition and Repetition Queries)
 
-    public abstract class RBSConditionQuery : RBSQuery
+    public abstract class RBSBindedQuery : RBSQuery
     {
         public RBSDatum Binding { get; set; }
     }
+
+    // Condition Queries
+
+    public abstract class RBSConditionQuery : RBSBindedQuery { }
 
     public class RBSQueryLocationTime : RBSConditionQuery
     {
@@ -120,9 +124,9 @@ public abstract class RBSQuery : IRBSQuery
 
     // Repetition Queries
 
-    public abstract class RBSRepetitionQuery : RBSQuery
+    public abstract class RBSRepetitionQuery : RBSBindedQuery
     {
-        public RBSDatum Binding { get; set; }
+        public RBSDatum Match { get; set; }
     }
 
     public class RBSQueryCloseAgents : RBSRepetitionQuery
@@ -131,9 +135,8 @@ public abstract class RBSQuery : IRBSQuery
         {
             return datum.value is Info.CloseAgentsInfo info &&
                 Binding.value is Info bindingInfo &&
-                info.Agent == bindingInfo.Agent &&
-                info.Location.CloseTo(bindingInfo.Location) &&
-                info.TimeInterval.CloseTo(bindingInfo.TimeInterval);
+                Match.value is Info matchInfo &&
+                info.CloseTo(matchInfo.Agent, matchInfo.Location, matchInfo.TimeInterval, bindingInfo.Agent);
         }
     }
 
@@ -143,9 +146,8 @@ public abstract class RBSQuery : IRBSQuery
         {
             return datum.value is Info.CloseDeadBodyInfo info &&
                 Binding.value is Info bindingInfo &&
-                info.Agent == bindingInfo.Agent &&
-                info.Location.CloseTo(bindingInfo.Location) &&
-                info.TimeInterval.CloseTo(bindingInfo.TimeInterval);
+                Match.value is Info matchInfo &&
+                info.CloseTo(matchInfo.Agent, matchInfo.Location, matchInfo.TimeInterval, bindingInfo.Agent);
         }
     }
 
@@ -155,9 +157,8 @@ public abstract class RBSQuery : IRBSQuery
         {
             return datum.value is Info.CloseDeadAliveInfo info &&
                 Binding.value is Info bindingInfo &&
-                info.Agent == bindingInfo.Agent &&
-                info.Location.CloseTo(bindingInfo.Location) &&
-                info.TimeInterval.CloseTo(bindingInfo.TimeInterval);
+                Match.value is Info matchInfo &&
+                info.CloseTo(matchInfo.Agent, matchInfo.Location, matchInfo.TimeInterval, bindingInfo.Agent);
         }
     }
 
@@ -167,8 +168,8 @@ public abstract class RBSQuery : IRBSQuery
         {
             return datum.value is Info.DistantInfo info &&
                 Binding.value is Info bindingInfo &&
-                info.Agent == bindingInfo.Agent &&
-                info.Location.CloseTo(bindingInfo.Location);
+                Match.value is Info matchInfo &&
+                info.CloseTo(matchInfo.Agent, bindingInfo.Location, matchInfo.TimeInterval);
         }
     }
 
@@ -178,9 +179,8 @@ public abstract class RBSQuery : IRBSQuery
         {
             return datum.value is Info.TruthfulInfo info &&
                 Binding.value is Info bindingInfo &&
-                info.Agent == bindingInfo.Agent &&
-                info.Location.CloseTo(bindingInfo.Location) &&
-                info.TimeInterval.CloseTo(bindingInfo.TimeInterval);
+                Match.value is Info matchInfo &&
+                info.CloseTo(matchInfo.Agent, bindingInfo.Location, bindingInfo.TimeInterval);
         }
     }
 }

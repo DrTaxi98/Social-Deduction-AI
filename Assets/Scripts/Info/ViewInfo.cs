@@ -10,6 +10,27 @@ public abstract class ViewInfo : AgentInfo
         SeeingAgent = seeingAgent;
     }
 
+    public override bool CloseTo(object obj)
+    {
+        return obj is ViewInfo info &&
+            CloseTo(info.Agent, info.Location, info.TimeInterval, info.SeeingAgent);
+    }
+
+    public bool CloseTo(Agent agent, Location location, TimeInterval timeInterval, Agent seeingAgent)
+    {
+        return CloseTo(agent, location, timeInterval) &&
+            SeeingAgent == agent;
+    }
+
+    public override string ToMessage(Agent agent)
+    {
+        string message = base.ToMessage(agent);
+
+        return (SeeingAgent == agent) ?
+            Utils.ReplaceString(message, SeeingAgent.name, SUBJECT_REPLACEMENT) :
+            message;
+    }
+
     public override bool Equals(object obj)
     {
         return obj is ViewInfo info &&

@@ -17,4 +17,12 @@ public static class Utils
             this.color = color;
         }
     }
+
+    public static string ReplaceString(string oldString, string oldValue, string newValue)
+    {
+        int index = oldString.IndexOf(oldValue);
+        string newString = oldString.Substring(0, index) + newValue +
+            oldString.Substring(index + oldValue.Length);
+        return newString;
+    }
 }

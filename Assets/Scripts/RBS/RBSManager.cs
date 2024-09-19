@@ -58,27 +58,27 @@ public class RBSManager
 
     private bool CloseDeadBodyCondition()
     {
-        return Match(RBSQuery.DeadBody(), RBSQuery.LocationTime(), RBSQuery.CloseDeadBody());
+        return Match(RBSQuery.DeadBody, RBSQuery.LocationTime, RBSQuery.CloseDeadBody);
     }
 
     private bool CloseDeadAliveCondition()
     {
-        return Match(RBSQuery.DeadAlive(), RBSQuery.LocationTime(), RBSQuery.CloseDeadAlive());
+        return Match(RBSQuery.DeadAlive, RBSQuery.LocationTime, RBSQuery.CloseDeadAlive);
     }
 
     private bool DistantCondition()
     {
-        return Match(RBSQuery.LocationInfo(), RBSQuery.DistantLocationTime(), RBSQuery.Distant());
+        return Match(RBSQuery.LocationInfo, RBSQuery.DistantLocationTime, RBSQuery.Distant);
     }
 
     private bool TruthfulCondition()
     {
-        return Match(RBSQuery.LocationInfo(), RBSQuery.SeenLocationTime(), RBSQuery.Truthful());
+        return Match(RBSQuery.LocationInfo, RBSQuery.SeenLocationTime, RBSQuery.Truthful);
     }
 
     private bool CloseAgentsCondition()
     {
-        return Match(RBSQuery.AgentInfo(), RBSQuery.LocationTime(), RBSQuery.CloseAgents());
+        return Match(RBSQuery.AgentInfo, RBSQuery.LocationTime, RBSQuery.CloseAgents);
     }
 
     private bool Match(RBSQuery.RBSBindingQuery bindingQuery,
@@ -94,7 +94,8 @@ public class RBSManager
             {
                 if (match.value is not Info info || info.Agent != agent.Agent)
                 {
-                    repetitionQuery.Binding = match;
+                    repetitionQuery.Binding = binding;
+                    repetitionQuery.Match = match;
                     List<RBSDatum> repetitions = database.Match(repetitionQuery);
                     if (repetitions.Count == 0)
                     {
@@ -149,7 +150,7 @@ public class RBSManager
         Info bindingInfo = binding.value as Info;
         Info matchInfo = match.value as Info;
         Info.TruthfulInfo info =
-            new Info.TruthfulInfo(matchInfo.Agent, matchInfo.Location, matchInfo.TimeInterval);
+            new Info.TruthfulInfo(matchInfo.Agent, bindingInfo.Location, bindingInfo.TimeInterval);
 
         List<Agent> suspects = new List<Agent>() { matchInfo.Agent };
         Action(info, suspects, TRUTHFUL_SUSPECT_POINTS);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class RBSAgent
 {
@@ -80,25 +81,42 @@ public class RBSAgent
 
     public void Vote()
     {
-        Agent suspect = null;
-        int maxSuspectLevel = int.MinValue;
-
-        List<Agent> aliveAgents = GameManager.Instance.meeting.AliveAgents;
-        foreach (Agent aliveAgent in aliveAgents)
-        {
-            if (aliveAgent != Agent && aliveAgent.MeetingAgent.SuspectLevel > maxSuspectLevel)
-            {
-                suspect = aliveAgent;
-                maxSuspectLevel = aliveAgent.MeetingAgent.SuspectLevel;
-            }
-        }
-
-        GameManager.Instance.meeting.Vote(suspect);
+        List<Agent> suspects = GetSuspects();
+        int randomIndex = Random.Range(0, suspects.Count);
+        GameManager.Instance.meeting.Vote(suspects[randomIndex]);
     }
 
     private void ShareInfo(RBSDatum datum)
     {
         GameManager.Instance.meeting.DisplayMessage(datum);
         GameManager.Instance.meeting.ShareDatum(datum);
+    }
+
+    private List<Agent> GetSuspects()
+    {
+        List<Agent> suspects = new List<Agent>();
+        int maxSuspectLevel = int.MinValue;
+
+        List<Agent> aliveAgents = GameManager.Instance.meeting.AliveAgents;
+        foreach (Agent aliveAgent in aliveAgents)
+        {
+            if (aliveAgent != Agent)
+            {
+                int suspectLevel = aliveAgent.MeetingAgent.SuspectLevel;
+
+                if (suspectLevel == maxSuspectLevel)
+                {
+                    suspects.Add(aliveAgent);
+                }
+                else if (suspectLevel > maxSuspectLevel)
+                {
+                    suspects.Clear();
+                    suspects.Add(aliveAgent);
+                    maxSuspectLevel = suspectLevel;
+                }
+            }
+        }
+
+        return suspects;
     }
 }

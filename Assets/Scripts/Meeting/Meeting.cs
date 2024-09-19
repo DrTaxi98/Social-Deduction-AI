@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class Meeting : MonoBehaviour
 {
-    private const string MESSAGE_DATA_SEPARATOR = " and ";
-    private const string START_END_SEPARATOR = ", so ";
+    private const string MESSAGE_AND = " and ";
+    private const string MESSAGE_COMMA = ", ";
+    private const string MESSAGE_SO = MESSAGE_COMMA + "so ";
     private const string MESSAGE_END = ".";
 
     [Range(1, 50)] public int maxTurn = 20;
@@ -60,7 +61,7 @@ public class Meeting : MonoBehaviour
 
     public void DisplayMessage(List<RBSDatum> startData, List<RBSDatum> endData)
     {
-        string message = DataToMessage(startData) + START_END_SEPARATOR + DataToMessage(endData) + MESSAGE_END;
+        string message = DataToMessage(startData) + MESSAGE_SO + DataToMessage(endData) + MESSAGE_END;
         DisplayMessage(message);
     }
 
@@ -137,62 +138,86 @@ public class Meeting : MonoBehaviour
         string message = "";
         foreach (RBSDatum datum in data)
         {
-            message += DatumToMessage(datum) + MESSAGE_DATA_SEPARATOR;
+            message += DatumToMessage(datum) + MESSAGE_AND;
         }
 
-        return message.Substring(0, message.Length - MESSAGE_DATA_SEPARATOR.Length);
+        return message.Substring(0, message.Length - MESSAGE_AND.Length);
     }
 
     private string DatumToMessage(RBSDatum datum)
     {
-        string message = datum.ToString();
-
-        if ((datum.value is ViewInfo viewInfo && viewInfo.SeeingAgent == currentAgent) ||
-            (datum.value is LocationInfo locationInfo && locationInfo.Agent == currentAgent))
-            message = ReplaceName(message, currentAgent.name, "I");
-
-        if (datum.value is ViewInfo info && info.Agent == currentAgent)
-            message = ReplaceName(message, currentAgent.name, "me");
-
-        return message;
-    }
-
-    private string ReplaceName(string message, string name, string replacement)
-    {
-        int nameIndex = message.IndexOf(name);
-        string result = message.Substring(0, nameIndex) + replacement +
-            message.Substring(nameIndex + currentAgent.name.Length);
-        return result;
+        return (datum.value is Info info) ?
+            info.ToMessage(currentAgent) :
+            datum.ToString();
     }
 
     private void EndMeeting()
     {
-        Agent maxVotedAgent = null;
+        int maxVotes = GetMaxVotedAgents(out List<Agent> maxVotedAgents);
+        DisplayEndMessage(maxVotedAgents, maxVotes);
+
+        meetingController.enabled = false;
+    }
+
+    private int GetMaxVotedAgents(out List<Agent> maxVotedAgents)
+    {
+        maxVotedAgents = new List<Agent>();
         int maxVotes = 0;
 
         foreach (Agent agent in AliveAgents)
         {
-            if (votes.TryGetValue(agent, out int value) && value > maxVotes)
+            if (votes.TryGetValue(agent, out int value))
             {
-                maxVotedAgent = agent;
-                maxVotes = value;
+                if (value == maxVotes)
+                {
+                    maxVotedAgents.Add(agent);
+                }
+                else if (value > maxVotes)
+                {
+                    maxVotedAgents.Clear();
+                    maxVotedAgents.Add(agent);
+                    maxVotes = value;
+                }
             }
         }
 
-        string message = maxVotedAgent.name + " was voted out!\n" +
-            maxVotedAgent.name + " was ";
+        return maxVotes;
+    }
 
-        if (maxVotedAgent is Killer)
+    private void DisplayEndMessage(List<Agent> maxVotedAgents, int maxVotes)
+    {
+        Agent messageAgent;
+        string message = "";
+
+        if (maxVotedAgents.Count == 1)
         {
-            message += "the killer!";
+            messageAgent = maxVotedAgents[0];
+
+            message += messageAgent.name + " was voted out with " + maxVotes + " votes!\n";
+
+            if (messageAgent != GameManager.Instance.Killer)
+            {
+                message += messageAgent.name + " was not the killer! ";
+            }
         }
         else
         {
-            message += "not the killer! It was " + GameManager.Instance.Killer.name + "!";
+            messageAgent = GameManager.Instance.Killer;
+
+            for (int i = 0; i < maxVotedAgents.Count; i++)
+            {
+                message += maxVotedAgents[i].name;
+
+                if (i < maxVotedAgents.Count - 2)
+                    message += MESSAGE_COMMA;
+                else if (i == maxVotedAgents.Count - 2)
+                    message += MESSAGE_AND;
+            }
+
+            message += " received " + maxVotes + " votes, so no one was voted out!\n";
         }
 
-        meetingPanel.DisplayAgentMessage(maxVotedAgent, message);
-
-        meetingController.enabled = false;
+        message += GameManager.Instance.Killer.name + " was the killer!";
+        meetingPanel.DisplayAgentMessage(messageAgent, message);
     }
 }
