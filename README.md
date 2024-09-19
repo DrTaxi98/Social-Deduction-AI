@@ -11,7 +11,7 @@ If one of the agents find a dead body, a meeting starts, during which each agent
 For further information, see the project report: [Social_Deduction_AI.pdf](https://github.com/DrTaxi98/Social-Deduction-AI/blob/main/Social_Deduction_AI.pdf).
 
 ## Builds
-You can find the project builds in the [Releases](https://github.com/DrTaxi98/Social-Deduction-AI/releases) section or on the itch.io page.
+You can find the project builds in the [Releases](https://github.com/DrTaxi98/Social-Deduction-AI/releases) section or on the [itch.io page](https://drtaxi98.itch.io/social-deduction-ai).
 
 ## Usage
 The project can be played either from the Unity Editor or from a build:
