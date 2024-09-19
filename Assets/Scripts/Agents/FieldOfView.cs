@@ -14,6 +14,7 @@ public class FieldOfView : MonoBehaviour
     public float transparency = 0.15f;
 
     private Agent agent;
+    private Collider[] otherColliders;
     private List<Transform> currentlySeenAgents = new List<Transform>();
 
     private Color losColor;
@@ -26,6 +27,7 @@ public class FieldOfView : MonoBehaviour
     void Start()
     {
         agent = GetComponentInParent<Agent>();
+        otherColliders = new Collider[GameManager.Instance.agentCount - 1];
 
         losColor = agent.Color;
         fovColor = losColor;
@@ -53,9 +55,10 @@ public class FieldOfView : MonoBehaviour
 
     private void SeeAgents()
     {
-        Collider[] otherColliders = Physics.OverlapSphere(transform.position, radius, agentMask);
-        foreach (Collider otherCollider in otherColliders)
+        int collidersCount = Physics.OverlapSphereNonAlloc(transform.position, radius, otherColliders, agentMask);
+        for (int i = 0; i < collidersCount; i++)
         {
+            Collider otherCollider = otherColliders[i];
             Transform otherTransform = otherCollider.transform;
             if (otherTransform.parent != agent.transform)
             {
